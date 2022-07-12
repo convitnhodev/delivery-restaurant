@@ -5,6 +5,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"tap_code_lai/component"
 	"tap_code_lai/modules/restaurant/restauranttransport/ginrestaurant"
 )
 
@@ -20,9 +21,14 @@ func main() {
 func runService(db *gorm.DB) error {
 	r := gin.Default()
 
+	appCtx := component.NewAppContext(db)
+
 	restaurant := r.Group("/restaurants")
 	{
-		restaurant.POST("", ginrestaurant.CreateRestaurant(db))
+		restaurant.POST("", ginrestaurant.CreateRestaurant(appCtx))
+		restaurant.GET("/:id", ginrestaurant.FindIDRestaurant(appCtx))
+		restaurant.GET("", ginrestaurant.FindCity_IDRestaurant(appCtx))
+		restaurant.GET("/list/", ginrestaurant.ListRestaurant(appCtx))
 
 	}
 	//

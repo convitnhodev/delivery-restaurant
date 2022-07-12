@@ -2,13 +2,13 @@ package ginrestaurant
 
 import (
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	"tap_code_lai/component"
 	"tap_code_lai/modules/restaurant/resraurantmodel"
 	"tap_code_lai/modules/restaurant/restaurantbiz"
 	"tap_code_lai/modules/restaurant/restaurantstorage"
 )
 
-func CreateRestaurant(db *gorm.DB) gin.HandlerFunc {
+func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		var data resraurantmodel.RestaurantCreate
@@ -19,7 +19,7 @@ func CreateRestaurant(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		store := restaurantstorage.NewSQLStore(db)
+		store := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
 		biz := restaurantbiz.NewCreateRestaurantStore(store)
 
 		if err := biz.CreateRestaurant(c.Request.Context(), &data); err != nil {
