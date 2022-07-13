@@ -13,17 +13,16 @@ import (
 func FindIDRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
+
 		if err != nil {
-			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
-			return
+			panic(common.ErrInvalidRequest(err))
 		}
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
 		biz := restaurantbiz.NewFindRestaurantStore(store)
 		data, err := biz.FindRestaurant(c.Request.Context(), map[string]interface{}{"id": id})
 		if err != nil {
-			c.JSON(400, err)
-			return
+			panic(err)
 		}
 
 		c.JSON(http.StatusOK, common.SimpleSuccessReponse(data))

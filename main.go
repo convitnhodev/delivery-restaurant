@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"tap_code_lai/component"
+	"tap_code_lai/middleware"
 	"tap_code_lai/modules/restaurant/restauranttransport/ginrestaurant"
 )
 
@@ -21,10 +22,11 @@ func main() {
 
 func runService(db *gorm.DB) error {
 	r := gin.Default()
+	appCtx := component.NewAppContext(db)
+
+	r.Use(middleware.Recover(appCtx))
 
 	v1 := r.Group("/v1")
-
-	appCtx := component.NewAppContext(db)
 
 	restaurant := v1.Group("/restaurants")
 	{
