@@ -3,6 +3,7 @@ package ginrestaurant
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"tap_code_lai/common"
 	"tap_code_lai/component"
 	"tap_code_lai/modules/restaurant/resraurantmodel"
 	"tap_code_lai/modules/restaurant/restaurantbiz"
@@ -26,6 +27,6 @@ func FindCity_IDRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 			c.JSON(400, err)
 		}
 
-		c.JSON(http.StatusOK, data)
+		c.JSON(http.StatusOK, common.SimpleSuccessReponse(data))
 	}
 }

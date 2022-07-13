@@ -2,12 +2,14 @@ package restaurantstorage
 
 import (
 	"golang.org/x/net/context"
+	"tap_code_lai/common"
 	"tap_code_lai/modules/restaurant/resraurantmodel"
 )
 
 func (s *sqlStore) ListByConditions(ctx context.Context,
 	conditions map[string]interface{},
 	filter *resraurantmodel.Filter,
+	paging *common.Paging,
 	moreKeys ...string) ([]resraurantmodel.Restaurant, error) {
 
 	db := s.db
@@ -26,10 +28,17 @@ func (s *sqlStore) ListByConditions(ctx context.Context,
 
 	var result []resraurantmodel.Restaurant
 
-	if err := db.Find(&result).Error; err != nil {
+	// count total
+	if err := db.Count(&paging.Total).Error; err != nil {
 		return nil, err
 	}
 
+	if err := db.
+		Offset((paging.Page - 1) * paging.Limit).
+		Limit(paging.Limit).
+		Find(&result).Error; err != nil {
+		return nil, err
+	}
 	return result, nil
 
 }

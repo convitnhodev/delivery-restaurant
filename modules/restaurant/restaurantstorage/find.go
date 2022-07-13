@@ -17,7 +17,7 @@ func (s *sqlStore) FindByConditions(ctx context.Context,
 	var data resraurantmodel.Restaurant
 	err := db.Find(&data, conditions).Table(data.TableName()).Error
 	if err != nil {
-		return &data, err
+		return nil, err
 	}
 	return &data, nil
 }

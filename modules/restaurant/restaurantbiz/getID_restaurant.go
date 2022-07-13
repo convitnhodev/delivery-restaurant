@@ -1,6 +1,7 @@
 package restaurantbiz
 
 import (
+	"errors"
 	"golang.org/x/net/context"
 	"tap_code_lai/modules/restaurant/resraurantmodel"
 )
@@ -22,7 +23,12 @@ func NewFindRestaurantStore(store FindRestaurantStore) *findRestaurantStore {
 func (biz *findRestaurantStore) FindRestaurant(ctx context.Context, conditions map[string]interface{}) (*resraurantmodel.Restaurant, error) {
 	data, err := biz.store.FindByConditions(ctx, conditions)
 	if err != nil {
-		return data, err
+		return nil, err
 	}
+
+	if data.Status != 1 {
+		return nil, errors.New("data deleted")
+	}
+
 	return data, nil
 }

@@ -2,6 +2,7 @@ package ginrestaurant
 
 import (
 	"github.com/gin-gonic/gin"
+	"tap_code_lai/common"
 	"tap_code_lai/component"
 	"tap_code_lai/modules/restaurant/resraurantmodel"
 	"tap_code_lai/modules/restaurant/restaurantbiz"
@@ -29,6 +30,6 @@ func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, &data)
+		c.JSON(200, common.SimpleSuccessReponse(data))
 	}
 }

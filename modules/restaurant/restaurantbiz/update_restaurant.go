@@ -13,7 +13,7 @@ type UpdateRestaurantStore interface {
 
 	UpdateByCondition(ctx context.Context,
 		data *resraurantmodel.RestaurantUpdate,
-		conditons map[string]interface{}) error
+		conditions map[string]interface{}) error
 }
 
 type updateRestaurantStore struct {
