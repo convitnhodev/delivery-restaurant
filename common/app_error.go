@@ -18,7 +18,7 @@ type AppError struct {
 	Key string `json:"error_key"`
 }
 
-// normal err, bad request
+// normal error, bad request
 func NewErrorResponse(root error, msg, log, key string) *AppError {
 	return &AppError{
 		StatusCode: http.StatusBadRequest,
@@ -89,31 +89,31 @@ func ErrInternal(err error) *AppError {
 func ErrCannotListEntity(entity string, err error) *AppError {
 	return NewCustomError(
 		err,
-		fmt.Sprint("cannot list %s", strings.ToLower(entity)),
-		fmt.Sprint("ErrCannotList%s", entity),
+		fmt.Sprintf("cannot list %s", strings.ToLower(entity)),
+		fmt.Sprintf("ErrCannotList%s", entity),
 	)
 }
 
 func ErrCannotDeleteEntity(entity string, err error) *AppError {
 	return NewCustomError(
 		err,
-		fmt.Sprint("cannot delete %s", strings.ToLower(entity)),
-		fmt.Sprint("ErrCannotDelete%s", entity),
+		fmt.Sprintf("cannot delete %s", strings.ToLower(entity)),
+		fmt.Sprintf("ErrCannotDelete%s", entity),
 	)
 }
 
 func ErrEntityDeleted(entity string, err error) *AppError {
 	return NewCustomError(
 		err,
-		fmt.Sprint("%s deleted ", strings.ToLower(entity)),
-		fmt.Sprint("Err%Deleted", entity),
+		fmt.Sprintf("%s deleted ", strings.ToLower(entity)),
+		fmt.Sprintf("Err %s Deleted", entity),
 	)
 }
 
 func ErrCannotGetEntity(entity string, err error) *AppError {
 	return NewCustomError(
 		err,
-		fmt.Sprint("cannot get %s ", strings.ToLower(entity)),
-		fmt.Sprint("ErrCannotGet %s", entity),
+		fmt.Sprintf("cannot get %s ", strings.ToLower(entity)),
+		fmt.Sprintf("ErrCannotGet %s", entity),
 	)
 }

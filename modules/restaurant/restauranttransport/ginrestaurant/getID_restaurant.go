@@ -12,9 +12,7 @@ import (
 
 func FindIDRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		id, err := strconv.Atoi(c.Param("id"))
-
 		if err != nil {
 			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
 			return

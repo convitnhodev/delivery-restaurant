@@ -33,4 +33,5 @@ func (biz *findRestaurantStore) FindRestaurant(ctx context.Context, conditions m
 		return nil, common.ErrEntityDeleted(resraurantmodel.EntityName, nil)
 	}
 	return data, nil
+
 }
