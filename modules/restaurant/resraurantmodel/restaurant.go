@@ -3,24 +3,25 @@ package resraurantmodel
 import (
 	"errors"
 	"strings"
+	"tap_code_lai/common"
 )
 
 type Restaurant struct {
-	Id   int    `json:"id" gorm:"column:id"`
-	Name string `json:"name" gorm:"column:name"`
-	Addr string `json:"address" gorm:"addr"`
+	common.SQLModel `json:",inline"`
+	Name            string `json:"name" gorm:"column:name"`
+	Addr            string `json:"address" gorm:"addr"`
 }
 
 type RestaurantCreate struct {
-	Id   int    `json:"id" gorm:"column:id"`
-	Name string `json:"name" gorm:"column:name"`
-	Addr string `json:"address" gorm:"addr"`
+	common.SQLModel `json:",inline"`
+	Name            string `json:"name" gorm:"column:name"`
+	Addr            string `json:"address" gorm:"addr"`
 }
 
 type RestaurantUpdate struct {
-	Id   *int    `json:"id" gorm:"column:id"`
-	Name *string `json:"name" gorm:"column:name"`
-	Addr *string `json:"address" gorm:"addr"`
+	common.SQLModel `json:",inline"`
+	Name            *string `json:"name" gorm:"column:name"`
+	Addr            *string `json:"address" gorm:"addr"`
 }
 
 func (Restaurant) TableName() string {
