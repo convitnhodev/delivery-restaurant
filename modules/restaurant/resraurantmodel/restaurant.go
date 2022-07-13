@@ -6,6 +6,8 @@ import (
 	"tap_code_lai/common"
 )
 
+const EntityName = "restaurant"
+
 type Restaurant struct {
 	common.SQLModel `json:",inline"`
 	Name            string `json:"name" gorm:"column:name"`

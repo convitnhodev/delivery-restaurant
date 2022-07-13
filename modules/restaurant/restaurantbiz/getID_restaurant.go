@@ -1,8 +1,8 @@
 package restaurantbiz
 
 import (
-	"errors"
 	"golang.org/x/net/context"
+	"tap_code_lai/common"
 	"tap_code_lai/modules/restaurant/resraurantmodel"
 )
 
@@ -23,12 +23,14 @@ func NewFindRestaurantStore(store FindRestaurantStore) *findRestaurantStore {
 func (biz *findRestaurantStore) FindRestaurant(ctx context.Context, conditions map[string]interface{}) (*resraurantmodel.Restaurant, error) {
 	data, err := biz.store.FindByConditions(ctx, conditions)
 	if err != nil {
-		return nil, err
+		if err != common.RecordNotFound {
+			return nil, common.ErrCannotGetEntity(resraurantmodel.EntityName, err)
+		}
+		return nil, common.ErrCannotGetEntity(resraurantmodel.EntityName, err)
 	}
 
 	if data.Status != 1 {
-		return nil, errors.New("data deleted")
+		return nil, common.ErrEntityDeleted(resraurantmodel.EntityName, nil)
 	}
-
 	return data, nil
 }

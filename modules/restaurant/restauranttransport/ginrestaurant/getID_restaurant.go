@@ -16,7 +16,7 @@ func FindIDRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		id, err := strconv.Atoi(c.Param("id"))
 
 		if err != nil {
-			c.JSON(400, err)
+			c.JSON(http.StatusBadRequest, common.ErrInvalidRequest(err))
 			return
 		}
 
@@ -24,7 +24,7 @@ func FindIDRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		biz := restaurantbiz.NewFindRestaurantStore(store)
 		data, err := biz.FindRestaurant(c.Request.Context(), map[string]interface{}{"id": id})
 		if err != nil {
-			c.JSON(400, err.Error())
+			c.JSON(400, err)
 			return
 		}
 

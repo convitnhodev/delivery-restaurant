@@ -2,6 +2,8 @@ package restaurantstorage
 
 import (
 	"golang.org/x/net/context"
+	"gorm.io/gorm"
+	"tap_code_lai/common"
 	"tap_code_lai/modules/restaurant/resraurantmodel"
 )
 
@@ -15,9 +17,12 @@ func (s *sqlStore) FindByConditions(ctx context.Context,
 	}
 
 	var data resraurantmodel.Restaurant
-	err := db.Find(&data, conditions).Table(data.TableName()).Error
+	err := db.First(&data, conditions).Table(data.TableName()).Error
 	if err != nil {
-		return nil, err
+		if err == gorm.ErrRecordNotFound {
+			return nil, common.RecordNotFound
+		}
+		return nil, common.ErrDB(err)
 	}
 	return &data, nil
 }

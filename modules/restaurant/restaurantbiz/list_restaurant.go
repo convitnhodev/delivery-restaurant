@@ -29,7 +29,7 @@ func (biz *listRestaurantStore) ListRestaurant(ctx context.Context,
 	moreKeys ...string) ([]resraurantmodel.Restaurant, error) {
 
 	if filter.CityId < 0 {
-		return nil, errors.New("City_id must >= 0")
+		return nil, errors.New("City_id must > 0")
 	}
 
 	result, err := biz.store.ListByConditions(ctx, nil, filter, paging)
@@ -38,5 +38,4 @@ func (biz *listRestaurantStore) ListRestaurant(ctx context.Context,
 	}
 
 	return result, nil
-
 }
