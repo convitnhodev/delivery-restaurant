@@ -35,6 +35,5 @@ func UpdateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, common.SimpleSuccessReponse(true))
-
 	}
 }

@@ -29,6 +29,7 @@ func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 			return
 		}
 
+		// set default
 		paging.Fullfill()
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
