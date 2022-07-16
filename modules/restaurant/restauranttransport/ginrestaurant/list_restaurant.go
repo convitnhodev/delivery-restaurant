@@ -8,16 +8,14 @@ import (
 	"tap_code_lai/modules/restaurant/resraurantmodel"
 	"tap_code_lai/modules/restaurant/restaurantbiz"
 	"tap_code_lai/modules/restaurant/restaurantstorage"
+	"tap_code_lai/modules/restaurant_like/storage"
 )
 
 func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var filter resraurantmodel.Filter
 		if err := c.ShouldBind(&filter); err != nil {
-			c.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
+			panic(common.ErrInvalidRequest(err))
 		}
 
 		var paging common.Paging
@@ -33,12 +31,20 @@ func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		paging.Fullfill()
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
-		biz := restaurantbiz.NewListRestaurantStore(store)
+		storeLike := storage.NewSQLStore(appCtx.GetMainDbConnection())
+		biz := restaurantbiz.NewListRestaurantStore(store, storeLike)
 		data, err := biz.ListRestaurant(c.Request.Context(), nil, &filter, &paging)
 		if err != nil {
-			c.JSON(400, err)
+			panic(err)
 		}
 
-		c.JSON(http.StatusOK, common.SimpleSuccessReponse(data))
+		for i := range data {
+			data[i].Mark(false)
+
+		}
+
+		paging.NextCursor = data[len(data)-1].FakeId.String()
+
+		c.JSON(http.StatusOK, common.NewSuccessReponse(data, paging, filter))
 	}
 }

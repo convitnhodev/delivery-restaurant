@@ -12,6 +12,7 @@ type Restaurant struct {
 	common.SQLModel `json:",inline"`
 	Name            string `json:"name" gorm:"column:name"`
 	Addr            string `json:"address" gorm:"addr"`
+	LikeCount       int    `json:"like_count" gorm:"-"`
 }
 
 type RestaurantCreate struct {
@@ -47,4 +48,8 @@ func (res *RestaurantCreate) Validata() error {
 	}
 
 	return nil
+}
+
+func (data *Restaurant) Mark(isAdminOrOwner bool) {
+	data.GenUID(common.DbTypeRestaurant)
 }

@@ -3,7 +3,6 @@ package ginrestaurant
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 	"tap_code_lai/common"
 	"tap_code_lai/component"
 	"tap_code_lai/modules/restaurant/resraurantmodel"
@@ -13,7 +12,9 @@ import (
 
 func UpdateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Param("id"))
+		//	id, err := strconv.Atoi(c.Param("id"))
+
+		uid, err := common.FromBase58(c.Param("id"))
 
 		if err != nil {
 			c.JSON(400, err)
@@ -30,7 +31,7 @@ func UpdateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
 		biz := restaurantbiz.NewUpdateRestaurantStor(store)
 
-		if err := biz.UpdateRestaurant(c.Request.Context(), id, &data); err != nil {
+		if err := biz.UpdateRestaurant(c.Request.Context(), int(uid.GetLocalID()), &data); err != nil {
 			c.JSON(401, err)
 			return
 		}

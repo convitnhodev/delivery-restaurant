@@ -15,12 +15,17 @@ type ListRestaurantStore interface {
 		moreKeys ...string) ([]resraurantmodel.Restaurant, error)
 }
 
-type listRestaurantStore struct {
-	store ListRestaurantStore
+type GetLikeRestaurantStore interface {
+	GetRestaurantLike(ctx context.Context, ids []int) (map[int]int, error)
 }
 
-func NewListRestaurantStore(store ListRestaurantStore) *listRestaurantStore {
-	return &listRestaurantStore{store: store}
+type listRestaurantStore struct {
+	store ListRestaurantStore
+	like  GetLikeRestaurantStore
+}
+
+func NewListRestaurantStore(store ListRestaurantStore, like GetLikeRestaurantStore) *listRestaurantStore {
+	return &listRestaurantStore{store, like}
 }
 
 func (biz *listRestaurantStore) ListRestaurant(ctx context.Context,
@@ -35,6 +40,22 @@ func (biz *listRestaurantStore) ListRestaurant(ctx context.Context,
 	result, err := biz.store.ListByConditions(ctx, nil, filter, paging)
 	if err != nil {
 		return nil, err
+	}
+
+	ids := make([]int, len(result))
+
+	for i := range result {
+		ids[i] = result[i].Id
+	}
+
+	mapLike, err := biz.like.GetRestaurantLike(ctx, ids)
+
+	if err != nil {
+		return nil, common.ErrCannotListEntity(resraurantmodel.EntityName, err)
+	}
+
+	for i := range result {
+		result[i].LikeCount = mapLike[result[i].Id]
 	}
 
 	return result, nil
