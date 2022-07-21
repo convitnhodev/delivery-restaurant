@@ -43,3 +43,7 @@ func (j *jwtProvider) Generate(data tokenprovider.TokenPayload, expiry int) (*to
 		Created: time.Now(),
 	}, nil
 }
+
+func (j *jwtProvider) Validate(token string) (*tokenprovider.TokenPayload, error) {
+	return nil, nil
+}

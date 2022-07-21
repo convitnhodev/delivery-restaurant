@@ -23,7 +23,7 @@ func main() {
 
 func runService(db *gorm.DB) error {
 	r := gin.Default()
-	appCtx := component.NewAppContext(db)
+	appCtx := component.NewAppContext(db, "viethungdeptrai")
 
 	r.Use(middleware.Recover(appCtx))
 
@@ -42,6 +42,7 @@ func runService(db *gorm.DB) error {
 	user := v1.Group("/users")
 	{
 		user.POST("/register", ginuser.Register(appCtx))
+		user.POST("/login", ginuser.Login(appCtx))
 	}
 	return r.Run()
 }

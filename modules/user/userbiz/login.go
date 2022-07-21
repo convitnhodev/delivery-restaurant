@@ -11,21 +11,27 @@ type LoginStorage interface {
 	FindUser(ctx context.Context, conditions map[string]interface{}, moreInfo ...string) (*usermodel.User, error)
 }
 
-type TokenConfig interface {
-	GetAtExp() int
-	GetRtExp() int
-}
+//type TokenConfig interface {
+//	GetAtExp() int
+//	//GetRtExp() int
+//}
 
 type loginBusiness struct {
 	appCtx        component.AppContext
 	storeUser     LoginStorage
 	tokenProvider tokenprovider.Provider
 	hasher        Hasher
-	tkCfg         TokenConfig
+	//tkCfg         TokenConfig
+	expiry int
 }
 
-func NewLoginBusiness(storeUser LoginStorage, tokenProvider tokenprovider.Provider, hasher Hasher, tkCfg TokenConfig) *loginBusiness {
-	return &loginBusiness{storeUser: storeUser, tokenProvider: tokenProvider, hasher: hasher, tkCfg: tkCfg}
+func NewLoginBusiness(storeUser LoginStorage, tokenProvider tokenprovider.Provider, hasher Hasher, expiry int) *loginBusiness {
+	return &loginBusiness{
+		storeUser:     storeUser,
+		tokenProvider: tokenProvider,
+		hasher:        hasher,
+		expiry:        expiry,
+	}
 }
 
 func (biz *loginBusiness) Login(ctx context.Context, data *usermodel.UserLogin) (*tokenprovider.Token, error) {
@@ -47,7 +53,7 @@ func (biz *loginBusiness) Login(ctx context.Context, data *usermodel.UserLogin) 
 		Role:   user.Role,
 	}
 
-	accessToken, err := biz.tokenProvider.Generate(payload, biz.tkCfg.GetAtExp())
+	accessToken, err := biz.tokenProvider.Generate(payload, biz.expiry)
 
 	if err != nil {
 		// error handling
