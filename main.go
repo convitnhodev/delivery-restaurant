@@ -14,16 +14,18 @@ import (
 
 func main() {
 	dsn := os.Getenv("MYSQL_CONNECTION")
+	secretKey := os.Getenv("SECRET_KEY")
 	db, _ := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
-	if err := runService(db); err != nil {
+	if err := runService(db, secretKey); err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func runService(db *gorm.DB) error {
+func runService(db *gorm.DB, secretKey string) error {
 	r := gin.Default()
-	appCtx := component.NewAppContext(db, "viethungdeptrai")
+	// should use os variable
+	appCtx := component.NewAppContext(db, secretKey)
 
 	r.Use(middleware.Recover(appCtx))
 
