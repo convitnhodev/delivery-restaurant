@@ -21,10 +21,9 @@ func (u *User) GetUserId() int {
 	return u.Id
 }
 
-func (u *User) GetUserEmail() string {
+func (u *User) GetEmail() string {
 	return u.Email
 }
-
 func (u *User) GetRole() string {
 	return u.Role
 }
@@ -49,6 +48,10 @@ func (u UserCreate) TableName() string {
 }
 
 func (data *UserCreate) Mark(isAdminOrOwner bool) {
+	data.GenUID(common.DbUser)
+}
+
+func (data *User) Mark(isAdminOrOwner bool) {
 	data.GenUID(common.DbUser)
 }
 

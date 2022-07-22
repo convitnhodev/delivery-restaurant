@@ -45,6 +45,7 @@ func runService(db *gorm.DB, secretKey string) error {
 	{
 		user.POST("/register", ginuser.Register(appCtx))
 		user.POST("/login", ginuser.Login(appCtx))
+		user.GET("/profile", middleware.RequireAuth(appCtx), ginuser.GetProfile(appCtx))
 	}
 	return r.Run()
 }
