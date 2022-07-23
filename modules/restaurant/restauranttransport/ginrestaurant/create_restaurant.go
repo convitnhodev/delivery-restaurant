@@ -20,7 +20,7 @@ func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		// compel type of data Requester ( because Requester is interface)
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 		//fmt.Println(requester)
-		data.OwnerId = requester.GetUserId()
+		data.UserId = requester.GetUserId()
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
 		biz := restaurantbiz.NewCreateRestaurantStore(store)

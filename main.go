@@ -23,6 +23,7 @@ func main() {
 }
 
 func runService(db *gorm.DB, secretKey string) error {
+	// khong co gi ca
 	r := gin.Default()
 	// should use os variable
 	appCtx := component.NewAppContext(db, secretKey)
@@ -31,7 +32,7 @@ func runService(db *gorm.DB, secretKey string) error {
 
 	v1 := r.Group("/v1")
 
-	restaurant := v1.Group("/restaurants")
+	restaurant := v1.Group("/restaurants", middleware.RequireAuth(appCtx))
 	{
 		restaurant.POST("", ginrestaurant.CreateRestaurant(appCtx))
 		restaurant.GET("/:id", ginrestaurant.FindIDRestaurant(appCtx))
