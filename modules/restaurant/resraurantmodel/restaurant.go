@@ -18,6 +18,7 @@ type Restaurant struct {
 type RestaurantCreate struct {
 	common.SQLModel `json:",inline"`
 	Name            string `json:"name" gorm:"column:name"`
+	OwnerId         int    `json:"-" gorm:"column:owner_id;"`
 	Addr            string `json:"address" gorm:"addr"`
 }
 

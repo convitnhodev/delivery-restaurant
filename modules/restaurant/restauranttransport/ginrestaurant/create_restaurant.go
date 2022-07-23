@@ -14,11 +14,13 @@ func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 
 		var data resraurantmodel.RestaurantCreate
 		if err := c.ShouldBind(&data); err != nil {
-			c.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
+			panic(common.ErrInvalidRequest(err))
 		}
+
+		// compel type of data Requester ( because Requester is interface)
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
+		//fmt.Println(requester)
+		data.OwnerId = requester.GetUserId()
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
 		biz := restaurantbiz.NewCreateRestaurantStore(store)
