@@ -30,14 +30,13 @@ func NewListRestaurantBiz(store ListRestaurantStore, like GetLikeRestaurantStore
 
 func (biz *listRestaurantBiz) ListRestaurant(ctx context.Context,
 	conditions map[string]interface{},
-	filter *resraurantmodel.Filter, paging *common.Paging,
-	moreKeys ...string) ([]resraurantmodel.Restaurant, error) {
+	filter *resraurantmodel.Filter, paging *common.Paging) ([]resraurantmodel.Restaurant, error) {
 
 	if filter.CityId < 0 {
 		return nil, errors.New("City_id must > 0")
 	}
 
-	result, err := biz.store.ListByConditions(ctx, nil, filter, paging, moreKeys...)
+	result, err := biz.store.ListByConditions(ctx, nil, filter, paging, "User")
 	if err != nil {
 		return nil, err
 	}

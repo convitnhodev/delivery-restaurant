@@ -33,14 +33,13 @@ func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
 		storeLike := storage.NewSQLStore(appCtx.GetMainDbConnection())
 		biz := restaurantbiz.NewListRestaurantBiz(store, storeLike)
-		data, err := biz.ListRestaurant(c.Request.Context(), nil, &filter, &paging, "User")
+		data, err := biz.ListRestaurant(c.Request.Context(), nil, &filter, &paging)
 		if err != nil {
 			panic(err)
 		}
 
 		for i := range data {
 			data[i].Mark(false)
-
 		}
 
 		paging.NextCursor = data[len(data)-1].FakeId.String()

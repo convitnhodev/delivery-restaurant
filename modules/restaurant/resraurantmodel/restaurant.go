@@ -4,18 +4,17 @@ import (
 	"errors"
 	"strings"
 	"tap_code_lai/common"
-	"tap_code_lai/modules/user/usermodel"
 )
 
 const EntityName = "restaurant"
 
 type Restaurant struct {
 	common.SQLModel `json:",inline"`
-	Name            string          `json:"name" gorm:"column:name"`
-	UserId          int             `json:"-" gorm:"column:owner_id"`
-	Addr            string          `json:"address" gorm:"addr"`
-	User            *usermodel.User `json:"user" gorm:"preload:true;"`
-	LikeCount       int             `json:"like_count" gorm:"-"`
+	Name            string             `json:"name" gorm:"column:name"`
+	UserId          int                `json:"-" gorm:"column:owner_id"`
+	Addr            string             `json:"address" gorm:"addr"`
+	User            *common.SimpleUser `json:"user" gorm:"preload:false;"`
+	LikeCount       int                `json:"like_count" gorm:"-"`
 }
 
 type RestaurantCreate struct {
@@ -56,4 +55,9 @@ func (res *RestaurantCreate) Validata() error {
 
 func (data *Restaurant) Mark(isAdminOrOwner bool) {
 	data.GenUID(common.DbTypeRestaurant)
+
+	u := data.User
+	if u != nil {
+		u.Mark(isAdminOrOwner)
+	}
 }
