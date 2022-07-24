@@ -32,8 +32,8 @@ func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
 		storeLike := storage.NewSQLStore(appCtx.GetMainDbConnection())
-		biz := restaurantbiz.NewListRestaurantStore(store, storeLike)
-		data, err := biz.ListRestaurant(c.Request.Context(), nil, &filter, &paging)
+		biz := restaurantbiz.NewListRestaurantBiz(store, storeLike)
+		data, err := biz.ListRestaurant(c.Request.Context(), nil, &filter, &paging, "User")
 		if err != nil {
 			panic(err)
 		}

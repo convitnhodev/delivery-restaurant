@@ -17,6 +17,8 @@ func main() {
 	secretKey := os.Getenv("SECRET_KEY")
 	db, _ := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
+	db = db.Debug()
+
 	if err := runService(db, secretKey); err != nil {
 		log.Fatalln(err)
 	}

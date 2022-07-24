@@ -19,16 +19,16 @@ type GetLikeRestaurantStore interface {
 	GetRestaurantLike(ctx context.Context, ids []int) (map[int]int, error)
 }
 
-type listRestaurantStore struct {
+type listRestaurantBiz struct {
 	store ListRestaurantStore
 	like  GetLikeRestaurantStore
 }
 
-func NewListRestaurantStore(store ListRestaurantStore, like GetLikeRestaurantStore) *listRestaurantStore {
-	return &listRestaurantStore{store, like}
+func NewListRestaurantBiz(store ListRestaurantStore, like GetLikeRestaurantStore) *listRestaurantBiz {
+	return &listRestaurantBiz{store, like}
 }
 
-func (biz *listRestaurantStore) ListRestaurant(ctx context.Context,
+func (biz *listRestaurantBiz) ListRestaurant(ctx context.Context,
 	conditions map[string]interface{},
 	filter *resraurantmodel.Filter, paging *common.Paging,
 	moreKeys ...string) ([]resraurantmodel.Restaurant, error) {
@@ -37,7 +37,7 @@ func (biz *listRestaurantStore) ListRestaurant(ctx context.Context,
 		return nil, errors.New("City_id must > 0")
 	}
 
-	result, err := biz.store.ListByConditions(ctx, nil, filter, paging)
+	result, err := biz.store.ListByConditions(ctx, nil, filter, paging, moreKeys...)
 	if err != nil {
 		return nil, err
 	}
