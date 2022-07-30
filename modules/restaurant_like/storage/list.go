@@ -6,7 +6,10 @@ import (
 	"golang.org/x/net/context"
 	"tap_code_lai/common"
 	"tap_code_lai/modules/restaurant_like/model"
+	"time"
 )
+
+const timeLayout = "2006-01-02 15:04:05.999999999"
 
 func (s *sqlStore) GetRestaurantLike(ctx context.Context, ids []int) (map[int]int, error) {
 	mapLike := make(map[int]int)
@@ -60,7 +63,12 @@ func (s *sqlStore) ListUserLikeRestaurant(ctx context.Context,
 
 	db = db.Preload("User")
 
-	if paging.FakeCursor != "" {
+	if v := paging.FakeCursor; v != "" {
+		_, err := time.Parse(timeLayout, string(base58.Decode(v)))
+		if err != nil {
+			return nil, common.ErrDB(err)
+		}
+
 		if uid, err := common.FromBase58(paging.FakeCursor); err == nil {
 			db = db.Where("created_at < ?", uid.GetLocalID())
 		}
@@ -81,7 +89,7 @@ func (s *sqlStore) ListUserLikeRestaurant(ctx context.Context,
 		users[i] = *result[i].User
 
 		if i == len(result)-1 {
-			cursorStr := base58.Encode([]byte(fmt.Sprint("%v", item.CreatedAt.Format("2006-01-02 15:04:05.999999999"))))
+			cursorStr := base58.Encode([]byte(fmt.Sprint("%v", item.CreatedAt.Format(timeLayout))))
 			paging.NextCursor = cursorStr
 		}
 

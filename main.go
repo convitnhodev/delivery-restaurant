@@ -5,7 +5,9 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"net/http"
 	"os"
+	"tap_code_lai/common"
 	"tap_code_lai/component"
 	"tap_code_lai/middleware"
 	"tap_code_lai/modules/restaurant/restauranttransport/ginrestaurant"
@@ -53,5 +55,19 @@ func runService(db *gorm.DB, secretKey string) error {
 		user.POST("/login", ginuser.Login(appCtx))
 		user.GET("/profile", ginuser.GetProfile(appCtx))
 	}
+
+	v1.GET("/encode-uid", func(c *gin.Context) {
+		type reqData struct {
+			DbType int        `form:"type"`
+			RealId int        `form:"id"`
+			FakeId common.UID `form:"fake_id"`
+		}
+
+		var req reqData
+		c.ShouldBind(&req)
+
+		req.FakeId = common.NewUID(uint32(req.RealId), req.DbType, 1)
+		c.JSON(http.StatusOK, common.SimpleSuccessReponse(req))
+	})
 	return r.Run()
 }

@@ -2,7 +2,7 @@ package common
 
 type SimpleUser struct {
 	SQLModel `json:",inline"`
-	Email    string `json:"email" gorm:"column:email"`
+	//Email    string `json:"email" gorm:"column:email"`
 	// dont return password
 
 	LastName  string `json:"last_name" gorm:"column:last_name"`

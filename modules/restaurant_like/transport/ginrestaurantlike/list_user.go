@@ -20,17 +20,11 @@ func ListUser(appCtx component.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
-		//id, err := strconv.Atoi(c.Param("id"))
-
-		var filter restaurantlikemodel.Filter
-
-		if err := c.ShouldBind(&filter); err != nil {
-			panic(common.ErrInvalidRequest(err))
+		filter := restaurantlikemodel.Filter{
+			RestaurantId: int(uid.GetLocalID()),
 		}
 
-		//filter := restaurantlikemodel.Filter{
-		//	UserId: int(uid.GetLocalID()),
-		//}
+		//id, err := strconv.Atoi(c.Param("id"))
 
 		//
 		var paging common.Paging
