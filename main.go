@@ -9,6 +9,7 @@ import (
 	"tap_code_lai/component"
 	"tap_code_lai/middleware"
 	"tap_code_lai/modules/restaurant/restauranttransport/ginrestaurant"
+	"tap_code_lai/modules/restaurant_like/transport/ginrestaurantlike"
 	"tap_code_lai/modules/user/usertransport/ginuser"
 )
 
@@ -42,13 +43,15 @@ func runService(db *gorm.DB, secretKey string) error {
 		restaurant.GET("/list", ginrestaurant.ListRestaurant(appCtx))
 		restaurant.PATCH("/:id", ginrestaurant.UpdateRestaurant(appCtx))
 		restaurant.DELETE("/:id", ginrestaurant.DeleteRestaurant(appCtx))
+
+		restaurant.GET("/:id/liked-users", ginrestaurantlike.ListUser(appCtx))
 	}
 
-	user := v1.Group("/users")
+	user := v1.Group("/users", middleware.RequireAuth(appCtx))
 	{
 		user.POST("/register", ginuser.Register(appCtx))
 		user.POST("/login", ginuser.Login(appCtx))
-		user.GET("/profile", middleware.RequireAuth(appCtx), ginuser.GetProfile(appCtx))
+		user.GET("/profile", ginuser.GetProfile(appCtx))
 	}
 	return r.Run()
 }

@@ -1,11 +1,10 @@
 package storage
 
 import (
-	 "fmt"
-	 "github.com/btcsuite/btcutil/base58"
+	"fmt"
+	"github.com/btcsuite/btcutil/base58"
 	"golang.org/x/net/context"
 	"tap_code_lai/common"
-	"tap_code_lai/modules/restaurant/resraurantmodel"
 	"tap_code_lai/modules/restaurant_like/model"
 )
 
@@ -35,7 +34,7 @@ func (s *sqlStore) GetRestaurantLike(ctx context.Context, ids []int) (map[int]in
 	return mapLike, nil
 }
 
-func (s *sqlStore) GetUserLikeRestaurant(ctx context.Context,
+func (s *sqlStore) ListUserLikeRestaurant(ctx context.Context,
 	conditions map[string]interface{},
 	filter *restaurantlikemodel.Filter,
 	paging *common.Paging,
@@ -43,23 +42,23 @@ func (s *sqlStore) GetUserLikeRestaurant(ctx context.Context,
 
 	db := s.db
 
-	var result []common.SimpleUser
+	var result []restaurantlikemodel.Like
 
-	db = db.Table(resraurantmodel.Restaurant{}.TableName()).Where(conditions)
+	db = db.Table(restaurantlikemodel.Like{}.TableName()).Where(conditions)
+
+	fmt.Println("filter: ", filter.RestaurantId)
 
 	if v := filter; v != nil {
 		if v.RestaurantId > 0 {
 			db = db.Where("restaurant_id = ?", v.RestaurantId)
 		}
 	}
-
-	if err := db.Table(resraurantmodel.Restaurant{}.TableName()).Count(&paging.Total).Error; err != nil {
+	//
+	if err := db.Count(&paging.Total).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
 
-	for i := range moreKeys {
-		db = db.Preload(moreKeys[i])
-	}
+	db = db.Preload("User")
 
 	if paging.FakeCursor != "" {
 		if uid, err := common.FromBase58(paging.FakeCursor); err == nil {
@@ -68,19 +67,25 @@ func (s *sqlStore) GetUserLikeRestaurant(ctx context.Context,
 	} else {
 		db = db.Offset((paging.Page - 1) * paging.Limit)
 	}
-
+	//
 	if err := db.
 		Limit(paging.Limit).
 		Order("created_at desc").
 		Find(&result).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
+	//
+	users := make([]common.SimpleUser, len(result))
 
-	for i, items := range result {
+	for i, item := range result {
+		users[i] = *result[i].User
+
 		if i == len(result)-1 {
-			cursorStr := base58.Encode([]byte(fmt.Sprint("%v", items.CreatedAt)))"))
+			cursorStr := base58.Encode([]byte(fmt.Sprint("%v", item.CreatedAt.Format("2006-01-02 15:04:05.999999999"))))
+			paging.NextCursor = cursorStr
 		}
+
 	}
 
-	return result, nil
+	return users, nil
 }
