@@ -7,6 +7,7 @@ import (
 	"tap_code_lai/component"
 	"tap_code_lai/modules/restaurant/resraurantmodel"
 	"tap_code_lai/modules/restaurant/restaurantbiz"
+	"tap_code_lai/modules/restaurant/restaurantrepo"
 	"tap_code_lai/modules/restaurant/restaurantstorage"
 	"tap_code_lai/modules/restaurant_like/storage"
 )
@@ -32,7 +33,8 @@ func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
 		storeLike := storage.NewSQLStore(appCtx.GetMainDbConnection())
-		biz := restaurantbiz.NewListRestaurantBiz(store, storeLike)
+		repo := restaurantrepo.NewListRestaurantRepo(store, storeLike)
+		biz := restaurantbiz.NewListRestaurantBiz(repo)
 		data, err := biz.ListRestaurant(c.Request.Context(), nil, &filter, &paging)
 		if err != nil {
 			panic(err)

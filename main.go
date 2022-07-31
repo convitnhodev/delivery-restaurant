@@ -58,16 +58,18 @@ func runService(db *gorm.DB, secretKey string) error {
 
 	v1.GET("/encode-uid", func(c *gin.Context) {
 		type reqData struct {
-			DbType int        `form:"type"`
-			RealId int        `form:"id"`
-			FakeId common.UID `form:"fake_id"`
+			DbType int `form:"type"`
+			RealId int `form:"id"`
 		}
 
 		var req reqData
 		c.ShouldBind(&req)
 
-		req.FakeId = common.NewUID(uint32(req.RealId), req.DbType, 1)
-		c.JSON(http.StatusOK, common.SimpleSuccessReponse(req))
+		//c.JSON(http.StatusOK, common.SimpleSuccessReponse(req))
+		c.JSON(http.StatusOK, gin.H{
+			// note
+			"uid": common.NewUID(uint32(req.RealId), req.DbType, 1).String(),
+		})
 	})
 	return r.Run()
 }

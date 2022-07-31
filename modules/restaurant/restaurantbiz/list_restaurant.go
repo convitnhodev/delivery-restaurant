@@ -7,25 +7,18 @@ import (
 	"tap_code_lai/modules/restaurant/resraurantmodel"
 )
 
-type ListRestaurantStore interface {
-	ListByConditions(ctx context.Context,
+type ListRestaurantRepo interface {
+	ListRestaurant(ctx context.Context,
 		conditions map[string]interface{},
-		filter *resraurantmodel.Filter,
-		paging *common.Paging,
-		moreKeys ...string) ([]resraurantmodel.Restaurant, error)
-}
-
-type GetLikeRestaurantStore interface {
-	GetRestaurantLike(ctx context.Context, ids []int) (map[int]int, error)
+		filter *resraurantmodel.Filter, paging *common.Paging) ([]resraurantmodel.Restaurant, error)
 }
 
 type listRestaurantBiz struct {
-	store ListRestaurantStore
-	like  GetLikeRestaurantStore
+	repo ListRestaurantRepo
 }
 
-func NewListRestaurantBiz(store ListRestaurantStore, like GetLikeRestaurantStore) *listRestaurantBiz {
-	return &listRestaurantBiz{store, like}
+func NewListRestaurantBiz(repo ListRestaurantRepo) *listRestaurantBiz {
+	return &listRestaurantBiz{repo}
 }
 
 func (biz *listRestaurantBiz) ListRestaurant(ctx context.Context,
@@ -36,26 +29,12 @@ func (biz *listRestaurantBiz) ListRestaurant(ctx context.Context,
 		return nil, errors.New("City_id must > 0")
 	}
 
-	result, err := biz.store.ListByConditions(ctx, nil, filter, paging, "User")
-	if err != nil {
-		return nil, err
-	}
-
-	ids := make([]int, len(result))
-
-	for i := range result {
-		ids[i] = result[i].Id
-	}
-
-	mapLike, err := biz.like.GetRestaurantLike(ctx, ids)
+	result, err := biz.repo.ListRestaurant(ctx, conditions, filter, paging)
 
 	if err != nil {
 		return nil, common.ErrCannotListEntity(resraurantmodel.EntityName, err)
 	}
 
-	for i := range result {
-		result[i].LikeCount = mapLike[result[i].Id]
-	}
-
 	return result, nil
+
 }

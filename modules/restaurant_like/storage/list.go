@@ -64,14 +64,12 @@ func (s *sqlStore) ListUserLikeRestaurant(ctx context.Context,
 	db = db.Preload("User")
 
 	if v := paging.FakeCursor; v != "" {
-		_, err := time.Parse(timeLayout, string(base58.Decode(v)))
+		timeCreated, err := time.Parse(timeLayout, string(base58.Decode(v)))
 		if err != nil {
 			return nil, common.ErrDB(err)
 		}
 
-		if uid, err := common.FromBase58(paging.FakeCursor); err == nil {
-			db = db.Where("created_at < ?", uid.GetLocalID())
-		}
+		db = db.Where("created_at < ?", timeCreated.Format("2006-01-02 15:04:05"))
 	} else {
 		db = db.Offset((paging.Page - 1) * paging.Limit)
 	}
@@ -86,10 +84,12 @@ func (s *sqlStore) ListUserLikeRestaurant(ctx context.Context,
 	users := make([]common.SimpleUser, len(result))
 
 	for i, item := range result {
+		result[i].User.CreateAt = item.CreateAt
+		result[i].User.UpdateAt = nil
 		users[i] = *result[i].User
 
 		if i == len(result)-1 {
-			cursorStr := base58.Encode([]byte(fmt.Sprint("%v", item.CreatedAt.Format(timeLayout))))
+			cursorStr := base58.Encode([]byte(fmt.Sprint("%v", item.CreateAt.Format(timeLayout))))
 			paging.NextCursor = cursorStr
 		}
 
