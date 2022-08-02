@@ -35,5 +35,6 @@ func Recover(ac component.AppContext) gin.HandlerFunc {
 		// Call the next handler, if exist next middleware, it will be go to next middleware, if not, it will go to handler
 		// this is endpoint
 		c.Next()
+		return
 	}
 }

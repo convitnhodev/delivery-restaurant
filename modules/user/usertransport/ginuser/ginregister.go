@@ -17,14 +17,18 @@ func Register(appCtx component.AppContext) gin.HandlerFunc {
 		var data usermodel.UserCreate
 
 		if err := c.ShouldBind(&data); err != nil {
-			panic(err)
+			//panic(err)
+			c.JSON(http.StatusOK, gin.H{"data": err})
+			return
 		}
 
 		store := userstorage.NewSQLStore(db)
 		md5 := hasher.NewMD5Hash()
 		biz := userbiz.NewRegisterBiz(store, md5)
 		if err := biz.Register(c.Request.Context(), &data); err != nil {
-			panic(err)
+			//panic(err)
+			c.JSON(http.StatusOK, gin.H{"data": err})
+			return
 		}
 
 		data.Mark(false)

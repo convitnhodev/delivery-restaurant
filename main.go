@@ -49,9 +49,10 @@ func runService(db *gorm.DB, secretKey string) error {
 		restaurant.GET("/:id/liked-users", ginrestaurantlike.ListUser(appCtx))
 	}
 
-	user := v1.Group("/users", middleware.RequireAuth(appCtx))
+	user := v1.Group("/users")
 	{
 		user.POST("/register", ginuser.Register(appCtx))
+		middleware.RequireAuth(appCtx)
 		user.POST("/login", ginuser.Login(appCtx))
 		user.GET("/profile", ginuser.GetProfile(appCtx))
 	}
