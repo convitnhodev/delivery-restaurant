@@ -47,6 +47,8 @@ func runService(db *gorm.DB, secretKey string) error {
 		restaurant.DELETE("/:id", ginrestaurant.DeleteRestaurant(appCtx))
 
 		restaurant.GET("/:id/liked-users", ginrestaurantlike.ListUser(appCtx))
+		restaurant.POST("/:id/like", ginrestaurantlike.UserLikeRestaurant(appCtx))
+		restaurant.DELETE("/:id/unlike", ginrestaurantlike.UserUnLikeRestaurant(appCtx))
 	}
 
 	user := v1.Group("/users")
