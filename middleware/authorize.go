@@ -20,6 +20,7 @@ func ErrWrongAuthHeader(err error) *common.AppError {
 }
 
 func extractTokenFromHeaderString(s string) (string, error) {
+	// split Bearer and token
 	parts := strings.Split(s, " ")
 	if parts[0] != "Bearer" || len(parts) < 2 || strings.TrimSpace(parts[1]) == "" {
 		return "", ErrWrongAuthHeader(nil)
@@ -62,5 +63,4 @@ func RequireAuth(appCtx component.AppContext) func(c *gin.Context) {
 		c.Set(common.CurrentUser, user)
 		c.Next()
 	}
-
 }

@@ -11,10 +11,14 @@ func Recover(ac component.AppContext) gin.HandlerFunc {
 		defer func() {
 			if err := recover(); err != nil {
 				// if catch error, custom Header
+
+				// custom (content-type) -> json
 				c.Header("Content-Type", "application/json")
 
 				// case 1: catch error, catch AppError
 				if appErr, ok := err.(*common.AppError); ok {
+
+					// stop
 					c.AbortWithStatusJSON(appErr.StatusCode, appErr)
 					// catch panic of gin
 					panic(err)

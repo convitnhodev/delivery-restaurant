@@ -10,8 +10,6 @@ import (
 func GetProfile(appCtx component.AppContext) func(ctx *gin.Context) {
 	return func(c *gin.Context) {
 		data := c.MustGet(common.CurrentUser).(common.Requester)
-
-		c.JSON(http.StatusOK, common.SimpleSuccessReponse(data))
-
+		c.JSON(http.StatusOK, common.SimpleSuccessReponse(data.GetUserId()))
 	}
 }

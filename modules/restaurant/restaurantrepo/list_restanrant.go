@@ -41,21 +41,21 @@ func (biz *listRestaurantRepo) ListRestaurant(ctx context.Context,
 		return nil, common.ErrCannotListEntity(restaurantlikemodel.EntityName, err)
 	}
 
-	ids := make([]int, len(result))
-
-	for i := range result {
-		ids[i] = result[i].Id
-	}
-
-	mapLike, err := biz.like.GetRestaurantLike(ctx, ids)
-
-	if err != nil {
-		return nil, common.ErrCannotListEntity(resraurantmodel.EntityName, err)
-	}
-
-	for i := range result {
-		result[i].LikeCount = mapLike[result[i].Id]
-	}
+	//ids := make([]int, len(result))
+	//
+	//for i := range result {
+	//	ids[i] = result[i].Id
+	//}
+	//
+	//mapLike, err := biz.like.GetRestaurantLike(ctx, ids)
+	//
+	//if err != nil {
+	//	return nil, common.ErrCannotListEntity(resraurantmodel.EntityName, err)
+	//}
+	//
+	//for i := range result {
+	//	result[i].LikeCount = mapLike[result[i].Id]
+	//}
 
 	return result, nil
 }
