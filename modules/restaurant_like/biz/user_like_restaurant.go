@@ -32,7 +32,10 @@ func (biz *userLikeRestaurantBiz) LikeRestaurant(ctx context.Context,
 	}
 
 	// side effect
-	_ = biz.incStore.IncreaseLikeCount(ctx, data.RestaurantId)
+
+	go func() {
+		_ = biz.incStore.IncreaseLikeCount(ctx, data.RestaurantId)
+	}()
 
 	return nil
 }

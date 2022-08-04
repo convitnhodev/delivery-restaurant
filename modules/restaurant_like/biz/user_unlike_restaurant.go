@@ -30,6 +30,9 @@ func (biz *userUnLikeRestaurantBiz) UnLikeRestaurant(ctx context.Context,
 		return common.ErrCannotCreateEntity("UnLike", err)
 	}
 
-	_ = biz.decStore.DecreaseLikeCount(ctx, restaurantId)
+	go func() {
+		_ = biz.decStore.DecreaseLikeCount(ctx, restaurantId)
+	}()
+
 	return nil
 }

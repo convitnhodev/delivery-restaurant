@@ -20,7 +20,7 @@ func (s *sqlStore) UpdateByCondition(ctx context.Context,
 func (s *sqlStore) IncreaseLikeCount(ctx context.Context, id int) error {
 	db := s.db
 	if err := db.Table(resraurantmodel.Restaurant{}.TableName()).Where("id = ?", id).
-		Update("like_count", gorm.Expr("like_count + ?", 1)).Error; err != nil {
+		Update("liked_count", gorm.Expr("liked_count + ?", 1)).Error; err != nil {
 		return common.ErrDB(err)
 	}
 	return nil
@@ -29,7 +29,7 @@ func (s *sqlStore) IncreaseLikeCount(ctx context.Context, id int) error {
 func (s *sqlStore) DecreaseLikeCount(ctx context.Context, id int) error {
 	db := s.db
 	if err := db.Table(resraurantmodel.Restaurant{}.TableName()).Where("id = ?", id).
-		Update("like_count", gorm.Expr("like_count - ?", 1)).Error; err != nil {
+		Update("liked_count", gorm.Expr("liked_count - ?", 1)).Error; err != nil {
 		return common.ErrDB(err)
 	}
 	return nil
