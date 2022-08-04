@@ -12,5 +12,4 @@ func (s *sqlStore) Create(ctx context.Context, data *resraurantmodel.RestaurantC
 		return common.ErrDB(err)
 	}
 	return nil
-
 }

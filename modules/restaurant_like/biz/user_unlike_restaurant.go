@@ -9,12 +9,17 @@ type UserUnLikeRestaurantStore interface {
 	Delete(ctx context.Context, userId, restaurantId int) error
 }
 
-type userUnLikeRestaurantBiz struct {
-	store UserUnLikeRestaurantStore
+type DecreaseLikeCountStore interface {
+	DecreaseLikeCount(ctx context.Context, id int) error
 }
 
-func NewUserUnLikeRestaurantBiz(store UserUnLikeRestaurantStore) *userUnLikeRestaurantBiz {
-	return &userUnLikeRestaurantBiz{store}
+type userUnLikeRestaurantBiz struct {
+	store    UserUnLikeRestaurantStore
+	decStore DecreaseLikeCountStore
+}
+
+func NewUserUnLikeRestaurantBiz(store UserUnLikeRestaurantStore, decStore DecreaseLikeCountStore) *userUnLikeRestaurantBiz {
+	return &userUnLikeRestaurantBiz{store, decStore}
 }
 
 func (biz *userUnLikeRestaurantBiz) UnLikeRestaurant(ctx context.Context,
@@ -25,5 +30,6 @@ func (biz *userUnLikeRestaurantBiz) UnLikeRestaurant(ctx context.Context,
 		return common.ErrCannotCreateEntity("UnLike", err)
 	}
 
+	_ = biz.decStore.DecreaseLikeCount(ctx, restaurantId)
 	return nil
 }

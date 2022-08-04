@@ -10,12 +10,17 @@ type UserLikeRestaurantStore interface {
 	Create(ctx context.Context, data *restaurantlikemodel.Like) error
 }
 
-type userLikeRestaurantBiz struct {
-	store UserLikeRestaurantStore
+type IncreaseLikeCountStore interface {
+	IncreaseLikeCount(ctx context.Context, id int) error
 }
 
-func NewUserLikeRestaurantBiz(store UserLikeRestaurantStore) *userLikeRestaurantBiz {
-	return &userLikeRestaurantBiz{store}
+type userLikeRestaurantBiz struct {
+	store    UserLikeRestaurantStore
+	incStore IncreaseLikeCountStore
+}
+
+func NewUserLikeRestaurantBiz(store UserLikeRestaurantStore, incStore IncreaseLikeCountStore) *userLikeRestaurantBiz {
+	return &userLikeRestaurantBiz{store, incStore}
 }
 
 func (biz *userLikeRestaurantBiz) LikeRestaurant(ctx context.Context,
@@ -25,6 +30,9 @@ func (biz *userLikeRestaurantBiz) LikeRestaurant(ctx context.Context,
 	if err != nil {
 		return common.ErrCannotCreateEntity("Like", err)
 	}
+
+	// side effect
+	_ = biz.incStore.IncreaseLikeCount(ctx, data.RestaurantId)
 
 	return nil
 }

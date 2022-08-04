@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"tap_code_lai/common"
 	"tap_code_lai/component"
+	"tap_code_lai/modules/restaurant/restaurantstorage"
 	rslikebiz "tap_code_lai/modules/restaurant_like/biz"
 	restaurantlikemodel "tap_code_lai/modules/restaurant_like/model"
 	"tap_code_lai/modules/restaurant_like/storage"
@@ -28,7 +29,8 @@ func UserLikeRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		}
 
 		store := storage.NewSQLStore(appCtx.GetMainDbConnection())
-		biz := rslikebiz.NewUserLikeRestaurantBiz(store)
+		incStore := restaurantstorage.NewSQLStore(appCtx.GetMainDbConnection())
+		biz := rslikebiz.NewUserLikeRestaurantBiz(store, incStore)
 
 		err = biz.LikeRestaurant(c.Request.Context(), &data)
 
