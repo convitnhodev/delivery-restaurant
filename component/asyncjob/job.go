@@ -6,9 +6,13 @@ import (
 )
 
 type Job interface {
+	// init job
 	Execute(ctx context.Context) error
+	// retruy job
 	Retry(ctx context.Context) error
+	// get job state
 	State() JobState
+	// set retry duration
 	SetRetryDurations(times []time.Duration)
 }
 
@@ -26,6 +30,7 @@ var (
 
 type JobHandler func(ctx context.Context) error
 
+// defile type JobState
 type JobState int
 
 const (
@@ -40,6 +45,7 @@ const (
 
 type jobHandler func(ctx context.Context) error
 
+// defile jobConfig
 type jobConfig struct {
 	MaxTimeout time.Duration
 	Retries    []time.Duration
@@ -107,6 +113,5 @@ func (j *job) SetRetryDurations(times []time.Duration) {
 	if len(times) == 0 {
 		return
 	}
-
 	j.config.Retries = times
 }

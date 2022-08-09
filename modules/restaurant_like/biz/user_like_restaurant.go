@@ -3,6 +3,7 @@ package rslikebiz
 import (
 	"golang.org/x/net/context"
 	"tap_code_lai/common"
+	"tap_code_lai/component/asyncjob"
 	restaurantlikemodel "tap_code_lai/modules/restaurant_like/model"
 )
 
@@ -33,9 +34,11 @@ func (biz *userLikeRestaurantBiz) LikeRestaurant(ctx context.Context,
 
 	// side effect
 
-	go func() {
-		_ = biz.incStore.IncreaseLikeCount(ctx, data.RestaurantId)
-	}()
+	job := asyncjob.NewJob(func(ctx context.Context) error {
+		return biz.incStore.IncreaseLikeCount(ctx, data.RestaurantId)
+	})
+
+	_ = asyncjob.NewGroup(true, job).Run(ctx)
 
 	return nil
 }

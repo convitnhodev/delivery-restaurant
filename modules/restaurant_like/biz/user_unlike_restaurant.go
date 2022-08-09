@@ -3,6 +3,7 @@ package rslikebiz
 import (
 	"golang.org/x/net/context"
 	"tap_code_lai/common"
+	"tap_code_lai/component/asyncjob"
 )
 
 type UserUnLikeRestaurantStore interface {
@@ -30,9 +31,11 @@ func (biz *userUnLikeRestaurantBiz) UnLikeRestaurant(ctx context.Context,
 		return common.ErrCannotCreateEntity("UnLike", err)
 	}
 
-	go func() {
-		_ = biz.decStore.DecreaseLikeCount(ctx, restaurantId)
-	}()
+	job := asyncjob.NewJob(func(ctx context.Context) error {
+		return biz.decStore.DecreaseLikeCount(ctx, restaurantId)
+	})
+
+	_ = asyncjob.NewGroup(true, job).Run(ctx)
 
 	return nil
 }
